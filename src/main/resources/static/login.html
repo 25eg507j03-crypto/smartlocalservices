@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SmartLocalServices</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #101827;
+            color: #F5F3EE;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            width: 320px;
+            max-width: 85%;
+            padding: 30px;
+            background: #1b2638;
+            border-radius: 12px;
+        }
+
+        h2 {
+            color: #D9A441;
+            text-align: center;
+        }
+
+        input, button {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            margin-top: 14px;
+            border-radius: 6px;
+        }
+
+        input {
+            border: 1px solid #777;
+        }
+
+        button {
+            border: none;
+            background: #D9A441;
+            color: #101827;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #message {
+            overflow-wrap: anywhere;
+        }
+
+        a {
+            color: #D9A441;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-box">
+        <h2>Welcome Back</h2>
+
+        <form id="loginForm">
+            <input
+                type="email"
+                id="email"
+                placeholder="Email Address"
+                required
+            >
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                required>
+         
+
+            <button type="submit" id="loginButton">Login</button>
+        </form>
+
+        <p id="message" role="status"></p>
+
+        <p>
+            New user?
+
+			<a href="/register.html">Register here</a>
+
+        </p>
+
+        <p><a href="/">Back to Home</a></p>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+
+        loginForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const message = document.getElementById('message');
+            const button = document.getElementById('loginButton');
+
+            message.textContent = 'Checking your details...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value.trim(),
+                        password: document.getElementById('password').value
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        result.message || 'Login failed. Check your details.'
+                    );
+                }
+
+				message.textContent = 'Login successful! Welcome back.';
+				setTimeout(() => {
+				    window.location.href = '/';
+				}, 1000);
+
+            } catch (error) {
+                message.textContent =
+                    'Error: ' + error.message;
+            } finally {
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - SmartLocalServices</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #101827;
+            color: #F5F3EE;
+            font-family: Arial, sans-serif;
+        }
+
+        .register-box {
+            width: 90%;
+            max-width: 420px;
+            padding: 30px;
+            border-radius: 12px;
+            background: #182235;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #D9A441;
+            text-align: center;
+        }
+
+        input, select, button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        input, select {
+            border: 1px solid #526078;
+            background: #F5F3EE;
+            color: #101827;
+        }
+
+        button {
+            border: none;
+            background: #D9A441;
+            color: #101827;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        a {
+            color: #D9A441;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        #registerMessage {
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-box">
+        <h1>Create Your Account</h1>
+
+        <form id="registerForm">
+            <input type="text" id="regName"
+                   placeholder="Full Name" required>
+
+            <input type="email" id="regEmail"
+                   placeholder="Email Address" required>
+
+            <input type="password" id="regPassword"
+                   placeholder="Password" required>
+
+            <input type="tel" id="regPhone"
+                   placeholder="Phone Number" required>
+
+            <select id="regRole" required>
+                <option value="Customer">Customer</option>
+                <option value="Provider">Service Provider</option>
+            </select>
+
+            <button type="submit">Register</button>
+            <p id="registerMessage" role="status"></p>
+        </form>
+
+        <div class="links">
+            Already registered?
+            <a href="/login.html">Login here</a>
+            <p><a href="/">Back to Home</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm')
+            .addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const message =
+                    document.getElementById('registerMessage');
+
+                message.textContent = 'Registering...';
+
+                const user = {
+                    name: document.getElementById('regName').value.trim(),
+                    email: document.getElementById('regEmail').value.trim(),
+                    password: document.getElementById('regPassword').value,
+                    phone: document.getElementById('regPhone').value.trim(),
+                    role: document.getElementById('regRole').value
+                };
+
+                try {
+                    const response = await fetch('/users/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(user)
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(
+                            result.message || 'Registration failed.'
+                        );
+                    }
+
+                    message.textContent =
+                        'Registration successful! Opening your website...';
+
+                    setTimeout(function() {
+                        window.location.replace('/');
+                    }, 1000);
+
+                } catch (error) {
+                    message.textContent = error.message;
+                }
+            });
+    </script>
+</body>
+</html>
