@@ -54,11 +54,15 @@ public class ServiceRequestController {
 
         Long userId = getLoggedInUserId(session);
 
+        if (userId == null && serviceRequest.getUserId() != null) {
+            userId = serviceRequest.getUserId();
+        }
+
         if (userId == null) {
             return loginRequired();
         }
 
-        // Always use the logged-in user's ID.
+        // Always set the user's ID.
         serviceRequest.setUserId(userId);
 
         if (serviceRequest.getStatus() == null
@@ -73,15 +77,21 @@ public class ServiceRequestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllServiceRequests(HttpSession session) {
-        Long userId = getLoggedInUserId(session);
+    public ResponseEntity<?> getAllServiceRequests(
+            @org.springframework.web.bind.annotation.RequestParam(required = false) Long userId,
+            HttpSession session) {
+        Long currentUserId = getLoggedInUserId(session);
 
-        if (userId == null) {
+        if (currentUserId == null && userId != null) {
+            currentUserId = userId;
+        }
+
+        if (currentUserId == null) {
             return loginRequired();
         }
 
         List<ServiceRequest> requests =
-                serviceRequestRepository.findByUserId(userId);
+                serviceRequestRepository.findByUserId(currentUserId);
 
         return ResponseEntity.ok(requests);
     }

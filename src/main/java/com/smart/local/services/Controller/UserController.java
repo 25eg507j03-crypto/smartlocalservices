@@ -98,8 +98,13 @@ public class UserController {
         session.setAttribute("userName", user.getName());
         session.setAttribute("userEmail", user.getEmail());
 
-        return ResponseEntity.ok(
-                Map.of("message", "Login successful."));
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("message", "Login successful.");
+        resp.put("userId", user.getId());
+        resp.put("userName", user.getName() != null ? user.getName() : "");
+        resp.put("userEmail", user.getEmail() != null ? user.getEmail() : "");
+        resp.put("role", user.getRole() != null ? user.getRole() : "");
+        return ResponseEntity.ok(resp);
     }
 
     // Check the current login session
