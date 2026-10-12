@@ -366,38 +366,41 @@ document.getElementById('bookingForm').addEventListener('submit', async event =>
 	    return;
 	}
 
-    const booking = {
-        userId: 1,
-        providerId:selectedProviderId,
-        serviceType: sel.value,
-        requestDate: new Date().toISOString().slice(0, 10),
-        status: 'Pending',
-        description: document.getElementById('description').value.trim(),
-        address: document.getElementById('address').value.trim()
-    };
+   
+const booking = {
+    userId: 1,
+    providerId: selectedProviderId,
+    serviceType: sel.value,
+    requestDate: new Date().toISOString().slice(0, 10),
+    status: 'Pending',
+    description: document.getElementById('description').value.trim(),
+    address: document.getElementById('address').value.trim()
+};
 
-    msg.textContent = 'Submitting your booking...';
+msg.textContent = 'Submitting your booking...';
 
-    try {
-		const response = await fetch(fetch('/service-requests', {
-		    method: 'POST',
-		    headers: {
-		        'Content-Type': 'application/json'
-		    },
-		    body: JSON.stringify(booking)
-		});
-        if (!response.ok) {
-            throw new Error('Server returned status ' + response.status);
-        }
+try {
+    const response = await fetch('/service-requests', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(booking)
+    });
 
-        msg.textContent = 'Booking submitted successfully! Your request has been saved.';
-        event.target.reset();
-
-    } catch (error) {
-        console.error('Booking error:', error);
-        msg.textContent = 'Booking failed. Please make sure your Spring Boot backend is running and try again.';
+    if (!response.ok) {
+        throw new Error('Server returned status ' + response.status);
     }
+
+    msg.textContent = 'Booking submitted successfully! Your request has been saved.';
+    event.target.reset();
+
+} catch (error) {
+    console.error('Booking error:', error);
+    msg.textContent = 'Booking failed. Please check the browser Console.';
+}
 });
+
 
 
 async function loadBookings() {
