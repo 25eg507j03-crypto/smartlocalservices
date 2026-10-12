@@ -379,7 +379,7 @@ document.getElementById('bookingForm').addEventListener('submit', async event =>
     msg.textContent = 'Submitting your booking...';
 
     try {
-		const response = await fetch('http://localhost:8080/service-requests', {
+		const response = await fetch(fetch('/service-requests', {
 		    method: 'POST',
 		    headers: {
 		        'Content-Type': 'application/json'
